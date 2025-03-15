@@ -144,7 +144,6 @@ class Vehicle {
   #year;
   #pricePerDay;
   #isAvailable;
-  infoObj;
 
   constructor(params) {
     this.#brand = params.brand;
@@ -152,11 +151,14 @@ class Vehicle {
     this.#year = params.year;
     this.#pricePerDay = params.pricePerDay;
     this.#isAvailable = params.isAvailable;
-    this.infoObj = params;
   }
 
   info() {
-    console.log(this.infoObj);
+    return `Brand - ${this.#brand}, Model - ${this.#model}, Year - ${
+      this.#year
+    }, Price Per Day - ${this.#pricePerDay}, Is Available - ${
+      this.#isAvailable
+    }`;
   }
 
   markAsRented() {
@@ -175,7 +177,7 @@ class Vehicle {
 //   isAvailable: true,
 // });
 
-// bmw.info();
+// console.log(bmw.info());
 
 class Car extends Vehicle {
   seats;
@@ -184,20 +186,20 @@ class Car extends Vehicle {
     this.seats = params.seats;
   }
   info() {
-    console.log({ ...this.infoObj, seats: this.seats });
+    return super.info() + ", Seats - " + this.seats;
   }
 }
 
 // const bmw = new Car({
-//   brand: "awd",
-//   model: "asdkhh",
-//   year: 2311,
+//   brand: "toyota",
+//   model: "prius",
+//   year: 2011,
 //   pricePerDay: 566,
 //   isAvailable: true,
 //   seats: 5,
 // });
 
-// bmw.info();
+// console.log(bmw.info());
 
 class Truck extends Vehicle {
   cargoCapacity;
@@ -206,7 +208,7 @@ class Truck extends Vehicle {
     this.cargoCapacity = params.cargoCapacity;
   }
   info() {
-    console.log({ ...this.infoObj, cargoCapacity: this.cargoCapacity });
+    return super.info() + ", Cargo Capacity - " + this.cargoCapacity;
   }
 }
 
@@ -219,15 +221,31 @@ class Truck extends Vehicle {
 //   cargoCapacity: "500 kg",
 // });
 
-// bmw.info();
+// console.log(bmw.info());
 
 class Customer {
   #name;
   #email;
   #id;
 
-  info() {}
+  constructor(params) {
+    this.#name = params.name;
+    this.#email = params.email;
+    this.#id = params.id;
+  }
+
+  info() {
+    return { name: this.#name, email: this.#email, id: this.#id };
+  }
 }
+
+// const fred = new Customer({
+//   name: "fred",
+//   email: "fred@gmail.com",
+//   id: "256322",
+// });
+
+// fred.info();
 
 class Rental {
   #customer;
@@ -235,8 +253,31 @@ class Rental {
   #startDate;
   #endDate;
 
-  calculateTotalPrice() {}
-  info() {}
+  constructor(params) {
+    this.#customer = params.customer;
+    this.#vehicle = params.vehicle;
+    this.#startDate = params.startDate;
+    this.#endDate = params.endDate;
+  }
+
+  calculateTotalPrice() {
+    let diffTime =
+      (new Date(
+        this.#endDate.year,
+        this.#endDate.month - 1,
+        this.#endDate.day
+      ) -
+        new Date(
+          this.#startDate.year,
+          this.#startDate.month - 1,
+          this.#startDate.day
+        )) /
+      (1000 * 60 * 60 * 24);
+    console.log("End price: " + diffTime * this.#vehicle.info().pricePerDay);
+  }
+  info() {
+    return { customer: this.#customer };
+  }
 }
 
 class RentalService {
