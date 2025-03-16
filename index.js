@@ -153,13 +153,21 @@ class Rental {
 }
 
 class RentalService {
-  addVehicle() {}
-  addCustomer() {}
+  vehicles = [];
+  customers = [];
+  addVehicle(vehicle) {
+    this.vehicles.push(vehicle);
+  }
+  addCustomer(customer) {
+    this.customers.push(customer);
+  }
   rentVehicle(customerId, vehicleId, startDate, endDate) {}
   listAvailableVehicles() {}
   listRentals() {}
   returnVehicle(rentalId) {}
 }
+
+const firstRentalService = new RentalService();
 
 const fred = new Customer({
   name: "fred",
@@ -186,9 +194,18 @@ const kamaz = new Truck({
   brand: "awd",
   model: "asdkhh",
   year: 2311,
-  pricePerDay: 566,
+  pricePerDay: 400,
   isAvailable: true,
   cargoCapacity: "500 kg",
+});
+
+const bmw = new Car({
+  brand: "bmw",
+  model: "GT-45",
+  year: 2045,
+  pricePerDay: 100,
+  isAvailable: true,
+  seats: 4,
 });
 
 // const newRent = new Rental({
