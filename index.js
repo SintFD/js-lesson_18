@@ -1,97 +1,3 @@
-// Магазин электроники
-// Описание:
-// Смоделируйте магазин электроники.
-
-// Задание:
-
-// Создайте базовый класс Product с закрытыми свойствами name, price, brand.
-// Создайте наследников Phone и Laptop, добавив им уникальные свойства.
-// Реализуйте метод get_discount_price() для расчета цены со скидкой. Переопределите его для разных типов товаров.
-// Создайте класс Store, который хранит список продуктов и может выводить их список.
-
-// class Product {
-//   #name;
-//   #price;
-//   #brand;
-//   #type;
-
-//   constructor(params) {
-//     this.#name = params.name;
-//     this.#price = params.price;
-//     this.#brand = params.brand;
-//     this.#type = params.type;
-//   }
-
-//   info() {
-//     console.log({ name: this.#name, price: this.#price, brand: this.#brand });
-//   }
-//   get_discount_price() {}
-
-//   get price() {
-//     return this.#price;
-//   }
-// }
-
-// class Phone extends Product {
-//   #camera;
-
-//   constructor(params) {
-//     super(params);
-//     this.#camera = params.camera;
-//   }
-
-//   get_discount_price() {
-//     return `Цена со скидкой ${this.price * 0.9}`;
-//   }
-// }
-// class Laptop extends Product {
-//   #keyboard;
-//   constructor(params) {
-//     super(params);
-//     this.#keyboard = params.keyboard;
-//   }
-
-//   get_discount_price() {
-//     return `Цена со скидкой ${this.price * 0.7}`;
-//   }
-// }
-
-// const iphone = new Phone({
-//   name: "iphone 12",
-//   price: 1100,
-//   brand: "apple",
-//   camera: "48 mpx",
-// });
-
-// const asus = new Laptop({
-//   name: "ROG strix",
-//   price: 2800,
-//   brand: "apple",
-//   keyboard: "48 mpx",
-// });
-
-// class Store {
-//   #products = [];
-
-//   addProduct(newProduct) {
-//     console.log("product success added");
-//     this.#products.push(newProduct);
-//   }
-//   getProduct() {
-//     this.#products.forEach((product) => {
-//       product.info();
-//     });
-//   }
-// }
-
-// const fuadStore = new Store();
-
-// fuadStore.addProduct(iphone);
-// fuadStore.addProduct(asus);
-// fuadStore.getProduct();
-
-// _____________________________________________________________
-
 // Система бронирования автомобилей
 // Создайте систему для управления арендой автомобилей, которая включает управление клиентами, машинами и бронированиями.
 
@@ -156,9 +62,13 @@ class Vehicle {
   info() {
     return `Brand - ${this.#brand}, Model - ${this.#model}, Year - ${
       this.#year
-    }, Price Per Day - ${this.#pricePerDay}, Is Available - ${
+    }, Price Per Day - ${this.#pricePerDay}$, Is Available - ${
       this.#isAvailable
     }`;
+  }
+
+  get pricePerDay() {
+    return this.#pricePerDay;
   }
 
   markAsRented() {
@@ -168,16 +78,6 @@ class Vehicle {
     this.#isAvailable = true;
   }
 }
-
-// const bmw = new Vehicle({
-//   brand: "awd",
-//   model: "asdkhh",
-//   year: 2311,
-//   pricePerDay: 566,
-//   isAvailable: true,
-// });
-
-// console.log(bmw.info());
 
 class Car extends Vehicle {
   seats;
@@ -190,17 +90,6 @@ class Car extends Vehicle {
   }
 }
 
-// const bmw = new Car({
-//   brand: "toyota",
-//   model: "prius",
-//   year: 2011,
-//   pricePerDay: 566,
-//   isAvailable: true,
-//   seats: 5,
-// });
-
-// console.log(bmw.info());
-
 class Truck extends Vehicle {
   cargoCapacity;
   constructor(params) {
@@ -211,17 +100,6 @@ class Truck extends Vehicle {
     return super.info() + ", Cargo Capacity - " + this.cargoCapacity;
   }
 }
-
-// const bmw = new Truck({
-//   brand: "awd",
-//   model: "asdkhh",
-//   year: 2311,
-//   pricePerDay: 566,
-//   isAvailable: true,
-//   cargoCapacity: "500 kg",
-// });
-
-// console.log(bmw.info());
 
 class Customer {
   #name;
@@ -235,17 +113,11 @@ class Customer {
   }
 
   info() {
-    return { name: this.#name, email: this.#email, id: this.#id };
+    return `Customer Name: ${this.#name}, Customer Email: ${
+      this.#email
+    }, Customer ID: ${this.#id}`;
   }
 }
-
-// const fred = new Customer({
-//   name: "fred",
-//   email: "fred@gmail.com",
-//   id: "256322",
-// });
-
-// fred.info();
 
 class Rental {
   #customer;
@@ -273,10 +145,10 @@ class Rental {
           this.#startDate.day
         )) /
       (1000 * 60 * 60 * 24);
-    console.log("End price: " + diffTime * this.#vehicle.info().pricePerDay);
+    return "End price: " + diffTime * this.#vehicle.pricePerDay;
   }
   info() {
-    return { customer: this.#customer };
+    return `${this.#customer.info()}, ${this.#vehicle.info()} , ${this.calculateTotalPrice()}`;
   }
 }
 
@@ -288,3 +160,42 @@ class RentalService {
   listRentals() {}
   returnVehicle(rentalId) {}
 }
+
+const fred = new Customer({
+  name: "fred",
+  email: "fred@gmail.com",
+  id: "256322",
+});
+
+const bob = new Customer({
+  name: "bob",
+  email: "bob@gmail.com",
+  id: "1121211",
+});
+
+const toyota = new Car({
+  brand: "toyota",
+  model: "prius",
+  year: 2011,
+  pricePerDay: 60,
+  isAvailable: true,
+  seats: 5,
+});
+
+const kamaz = new Truck({
+  brand: "awd",
+  model: "asdkhh",
+  year: 2311,
+  pricePerDay: 566,
+  isAvailable: true,
+  cargoCapacity: "500 kg",
+});
+
+// const newRent = new Rental({
+//   customer: fred,
+//   vehicle: toyota,
+//   startDate: { year: 2024, month: 2, day: 24 },
+//   endDate: { year: 2024, month: 4, day: 11 },
+// });
+
+// console.log(newRent.info());
