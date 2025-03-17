@@ -50,6 +50,7 @@ class Vehicle {
   #year;
   #pricePerDay;
   #isAvailable;
+  #id;
 
   constructor(params) {
     this.#brand = params.brand;
@@ -57,6 +58,7 @@ class Vehicle {
     this.#year = params.year;
     this.#pricePerDay = params.pricePerDay;
     this.#isAvailable = params.isAvailable;
+    this.#id = params.id;
   }
 
   info() {
@@ -64,11 +66,19 @@ class Vehicle {
       this.#year
     }, Price Per Day - ${this.#pricePerDay}$, Is Available - ${
       this.#isAvailable
-    }`;
+    }, Vehicle ID: ${this.#id}`;
+  }
+
+  get id() {
+    return this.#id;
   }
 
   get pricePerDay() {
     return this.#pricePerDay;
+  }
+
+  get isAvailable() {
+    return this.#isAvailable;
   }
 
   markAsRented() {
@@ -112,6 +122,9 @@ class Customer {
     this.#id = params.id;
   }
 
+  get id() {
+    return this.#id;
+  }
   info() {
     return `Customer Name: ${this.#name}, Customer Email: ${
       this.#email
@@ -124,12 +137,22 @@ class Rental {
   #vehicle;
   #startDate;
   #endDate;
+  #id;
 
   constructor(params) {
     this.#customer = params.customer;
     this.#vehicle = params.vehicle;
     this.#startDate = params.startDate;
     this.#endDate = params.endDate;
+    this.#id = params.id;
+  }
+
+  get id() {
+    return this.#id;
+  }
+
+  get vehicle() {
+    return this.#vehicle;
   }
 
   calculateTotalPrice() {
@@ -148,38 +171,71 @@ class Rental {
     return "End price: " + diffTime * this.#vehicle.pricePerDay;
   }
   info() {
-    return `${this.#customer.info()}, ${this.#vehicle.info()} , ${this.calculateTotalPrice()}`;
+    return `${this.#customer.info()}, ${this.#vehicle.info()} , ${this.calculateTotalPrice()}, Rental ID: ${
+      this.#id
+    }`;
   }
 }
 
 class RentalService {
   vehicles = [];
   customers = [];
+  rentals = [];
   addVehicle(vehicle) {
     this.vehicles.push(vehicle);
   }
   addCustomer(customer) {
     this.customers.push(customer);
   }
-  rentVehicle(customerId, vehicleId, startDate, endDate) {}
-  listAvailableVehicles() {}
-  listRentals() {}
-  returnVehicle(rentalId) {}
+  rentVehicle(customerId, vehicleId, startDate, endDate) {
+    const newRent = new Rental({
+      customer: this.customers.find((customer) => customer.id === customerId),
+      vehicle: this.vehicles.find((vehicle) => {
+        vehicle.markAsRented();
+        return vehicle.id === vehicleId;
+      }),
+      startDate: startDate,
+      endDate: endDate,
+      id: Number(customerId + "" + vehicleId),
+    });
+    this.rentals.push(newRent);
+  }
+  listAvailableVehicles() {
+    return this.vehicles
+      .filter((vehicle) => vehicle.isAvailable)
+      .map((vehicle) => vehicle.info());
+  }
+  listRentals() {
+    return this.rentals.map((rental) => rental.info());
+  }
+  returnVehicle(rentalId) {
+    this.rentals = this.rentals.filter((rental) => {
+      if (rental.id === rentalId) {
+        rental.vehicle.markAsAvailable();
+        return false;
+      }
+      return true;
+    });
+  }
 }
 
-const firstRentalService = new RentalService();
+// -----------------Customers--------------------------------
 
 const fred = new Customer({
   name: "fred",
   email: "fred@gmail.com",
-  id: "256322",
+  id: 256322,
 });
 
 const bob = new Customer({
   name: "bob",
   email: "bob@gmail.com",
-  id: "1121211",
+  id: 1121211,
 });
+
+// -----------------Customers--------------------------------
+
+// --------------------Vehicles--------------------------------
 
 const toyota = new Car({
   brand: "toyota",
@@ -187,16 +243,18 @@ const toyota = new Car({
   year: 2011,
   pricePerDay: 60,
   isAvailable: true,
+  id: 2312,
   seats: 5,
 });
 
 const kamaz = new Truck({
-  brand: "awd",
-  model: "asdkhh",
+  brand: "Kamaz",
+  model: "Big Boy",
   year: 2311,
   pricePerDay: 400,
   isAvailable: true,
-  cargoCapacity: "500 kg",
+  id: 788945,
+  cargoCapacity: "5000 kg",
 });
 
 const bmw = new Car({
@@ -205,14 +263,38 @@ const bmw = new Car({
   year: 2045,
   pricePerDay: 100,
   isAvailable: true,
+  id: 63452,
   seats: 4,
 });
 
-// const newRent = new Rental({
-//   customer: fred,
-//   vehicle: toyota,
-//   startDate: { year: 2024, month: 2, day: 24 },
-//   endDate: { year: 2024, month: 4, day: 11 },
-// });
+// ---------------------Vehicles--------------------------------
 
-// console.log(newRent.info());
+// ----------------------Service--------------------------------
+
+const firstRentalService = new RentalService();
+
+firstRentalService.addCustomer(fred);
+firstRentalService.addCustomer(bob);
+
+firstRentalService.addVehicle(bmw);
+firstRentalService.addVehicle(kamaz);
+firstRentalService.addVehicle(toyota);
+
+firstRentalService.rentVehicle(
+  1121211,
+  63452,
+  { year: 2024, month: 2, day: 24 },
+  { year: 2024, month: 4, day: 11 }
+);
+
+firstRentalService.rentVehicle(
+  256322,
+  788945,
+  { year: 2024, month: 3, day: 23 },
+  { year: 2024, month: 6, day: 9 }
+);
+
+// console.log(firstRentalService.listRentals());
+// firstRentalService.returnVehicle(256322788945);
+// console.log(firstRentalService.listRentals());
+// console.log(firstRentalService.listAvailableVehicles());
